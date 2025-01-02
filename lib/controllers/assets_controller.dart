@@ -38,7 +38,18 @@ class AssetsController extends GetxController {
   }
 
   Future<void> addAssets(String name, double amount) async {
-    trackedAssets.add(TrackedAsset(name: name, amount: amount));
+    TrackedAsset existingAsset = trackedAssets.firstWhere(
+      (asset) => asset.name == name,
+      orElse: () => TrackedAsset(name: " ", amount: 0.00),
+    );
+
+    if (existingAsset.name == " ") {
+      trackedAssets.add(TrackedAsset(name: name, amount: amount));
+    } else {
+      existingAsset.amount = (existingAsset.amount ?? 0.00) + amount;
+      trackedAssets.refresh();
+    }
+
     List<String> data = trackedAssets.map((asset) {
       return jsonEncode(asset);
     }).toList();

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeView extends StatelessWidget {
-  AssetsController _assetsController = Get.find();
+  final AssetsController _assetsController = Get.find();
   HomeView({super.key});
 
   @override
@@ -14,13 +14,25 @@ class HomeView extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: CircleAvatar(),
+        title: const Text(
+          "Asset DashBoard",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.orange,
+        elevation: 5,
+        leading: const Icon(Icons.account_balance_wallet, color: Colors.white),
         actions: [
           IconButton(
-              onPressed: () {
-                Get.dialog(AddAssetDialog());
-              },
-              icon: Icon(Icons.add))
+            onPressed: () {
+              Get.dialog(AddAssetDialog());
+            },
+            icon: const Icon(Icons.add, color: Colors.white),
+          ),
         ],
       ),
       body: Column(
@@ -33,34 +45,42 @@ class HomeView extends StatelessWidget {
     return SafeArea(
         child: Obx(
       () => _assetsController.loading.value == true
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Column(
               children: [
                 Center(
-                  child: Container(
+                  child: SizedBox(
                     width: MediaQuery.sizeOf(context).width,
                     child: Center(
-                      child: Text.rich(
-                        textAlign: TextAlign.center,
-                        TextSpan(children: [
-                          const TextSpan(
-                              text: "\$ ",
+                      child: Container(
+                        margin: EdgeInsets.only(top: 5),
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Text.rich(
+                          textAlign: TextAlign.center,
+                          TextSpan(children: [
+                            const TextSpan(
+                                text: "\$ ",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                )),
+                            TextSpan(
+                                text: _assetsController
+                                    .getPortfolioValue()
+                                    .toStringAsFixed(2),
+                                style: const TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold)),
+                            const TextSpan(
+                              text: "\n Portfolio value",
                               style: TextStyle(
-                                fontSize: 20,
-                              )),
-                          TextSpan(
-                              text:
-                                  "${_assetsController.getPortfolioValue().toStringAsFixed(2)}",
-                              style: const TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.bold)),
-                          const TextSpan(
-                            text: "\n Portfolio value",
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                        ]),
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ]),
+                        ),
                       ),
                     ),
                   ),
@@ -79,9 +99,12 @@ class HomeView extends StatelessWidget {
           children: [
             SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
             const Text(
-              "Portfolio",
+              "Coins",
+              style: TextStyle(fontSize: 20),
             ),
-            SizedBox(
+            Container(
+              decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: Colors.grey))),
               height: MediaQuery.sizeOf(context).height * 0.65,
               child: ListView.builder(
                   itemCount: _assetsController.trackedAssets.length,
@@ -99,8 +122,9 @@ class HomeView extends StatelessWidget {
                           background: Container(
                             color: Colors.red,
                             alignment: Alignment.centerRight,
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Icon(Icons.delete, color: Colors.white),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child:
+                                const Icon(Icons.delete, color: Colors.white),
                           ),
                           child: ListTile(
                             leading: Image.network(_assetsController

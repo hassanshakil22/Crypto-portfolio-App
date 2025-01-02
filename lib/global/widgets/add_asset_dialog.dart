@@ -30,6 +30,8 @@ class AddAssetDialogController extends GetxController {
 }
 
 class AddAssetDialog extends StatelessWidget {
+  TextEditingController _inputAmmount = TextEditingController();
+
   final controller = Get.put(
     AddAssetDialogController(),
   );
@@ -41,13 +43,16 @@ class AddAssetDialog extends StatelessWidget {
     return Obx(
       () => Center(
         child: Material(
+            color: Colors.transparent, // Make Material background transparent
+
+            borderRadius: BorderRadius.circular(15),
             child: Container(
-          width: MediaQuery.sizeOf(context).width * 0.80,
-          height: MediaQuery.sizeOf(context).height * 0.40,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15), color: Colors.white),
-          child: _buildUI(context),
-        )),
+              width: MediaQuery.sizeOf(context).width * 0.80,
+              height: MediaQuery.sizeOf(context).height * 0.40,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15), color: Colors.white),
+              child: _buildUI(context),
+            )),
       ),
     );
   }
@@ -64,14 +69,25 @@ class AddAssetDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           mainAxisSize: MainAxisSize.max,
           children: [
-            DropdownButton(
+            Container(
+              decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.circular(12), // Rounded corners for the box
+                border: Border.all(
+                    color: Colors.grey, width: 1), // Border color and width
+              ),
+              child: DropdownButton<String>(
                 value: controller.selectedAsset.value,
                 items: controller.assets.map((asset) {
-                  return DropdownMenuItem(
+                  return DropdownMenuItem<String>(
                     value: asset,
                     child: Text(
                       asset,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
                     ),
                   );
                 }).toList(),
@@ -79,17 +95,50 @@ class AddAssetDialog extends StatelessWidget {
                   if (value != null) {
                     controller.selectedAsset.value = value;
                   }
-                }),
+                },
+                icon: Icon(
+                  Icons.arrow_drop_down_circle,
+                  color: Theme.of(context).primaryColor,
+                ),
+                isDense: true,
+                iconSize: 30,
+                menuMaxHeight: MediaQuery.sizeOf(context).height * 0.5,
+                menuWidth: MediaQuery.sizeOf(context).width * 0.8,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                alignment: Alignment.center,
+                dropdownColor: Colors.grey.shade300,
+              ),
+            ),
             TextField(
+              controller: _inputAmmount,
               keyboardType: TextInputType.number,
-              onChanged: (value) {
-                controller.assetValue.value = double.parse(value);
-              },
-              decoration: const InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                hintText: 'Enter Asset Value',
+                hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor, width: 2),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey[400]!, width: 2),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
             ),
             MaterialButton(
               onPressed: () {
                 AssetsController _assetsController = Get.find();
+                controller.assetValue.value =
+                    double.tryParse(_inputAmmount.text) ?? 0.00;
                 _assetsController.addAssets(controller.selectedAsset.value,
                     controller.assetValue.value);
                 Get.back(

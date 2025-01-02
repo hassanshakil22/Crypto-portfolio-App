@@ -1,12 +1,11 @@
 import 'package:crypto_app/global/utils.dart';
 import 'package:crypto_app/views/home_view.dart';
+import 'package:crypto_app/views/splash_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
-  await registerServices();
-  await registerControllers();
   runApp(const MyApp());
 }
 
@@ -20,11 +19,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       routes: {
-        "/home": (context) => HomeView(),
+        "/splash": (context) => SplashView(),
       },
-      initialRoute: "/home",
+      initialRoute: "/splash",
       theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
           useMaterial3: true,
           textTheme: GoogleFonts.sansitaTextTheme()),
     );
